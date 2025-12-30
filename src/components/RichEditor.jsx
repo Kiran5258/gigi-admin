@@ -1,0 +1,21 @@
+import React, { useEffect } from "react";
+import { useQuill } from "react-quilljs";
+import "quill/dist/quill.snow.css";
+
+const RichEditor = ({ value, onChange }) => {
+  const { quill, quillRef } = useQuill();
+
+  useEffect(() => {
+    if (quill) {
+      quill.on("text-change", () => {
+        onChange(quill.root.innerHTML);
+      });
+
+      quill.root.innerHTML = value;
+    }
+  }, [quill]);
+
+  return <div ref={quillRef} />;
+};
+
+export default RichEditor;
