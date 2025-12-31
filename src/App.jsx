@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import AddDomainService from "./pages/AddDomainService";
 import AddServiceList from "./pages/AddServiceList";
 import { Employee } from "./pages/Employee";
+import { Service } from "./pages/Service";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -57,6 +58,10 @@ const App = () => {
         path="/employees"
         element={authUser ? <Employee /> : <Navigate to="/login" />}
       />
+      <Route
+      path="/services"
+      element={authUser ?<Service/>:<Navigate to="/login"/>}/>
+
       </Routes>
       <Toaster />
     </div>
