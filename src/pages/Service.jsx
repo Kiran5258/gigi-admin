@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../config/axios";
 import { Loader } from "lucide-react";
 import AdminLayout from "../components/AdminLayout";
+import { useNavigate } from "react-router-dom";
 
 export const Service = () => {
   const [domainService, setDomainService] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -18,16 +20,27 @@ export const Service = () => {
     }
   };
 
-  const deleteService=async(id)=>{
-    if(!window.confirm("Are you sure you want to delete this service?"))return;
-    try{
-        await axiosInstance.delete(`/admin/delete-domain-service/${id}`);
-        setDomainService(prev=>prev.filter(s=>s._id!==id));
+  const deleteService = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this service?")) return;
+
+    try {
+      const adminToken = localStorage.getItem("token");
+
+      await axiosInstance.delete(
+        `/admin/delete-domain-service/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+
+      setDomainService((prev) => prev.filter((s) => s._id !== id));
+    } catch (err) {
+      console.error("Delete failed", err.response?.data || err.message);
     }
-    catch(err){
-        console.error("Delete failed",err);
-    }
-  }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -94,13 +107,17 @@ export const Service = () => {
                     Active
                   </span>
                   <button className="text-sm font-medium text-red-400"
-                 onClick={()=>deleteService(service._id)}>
+                    onClick={() => deleteService(service._id)}>
                     Delete
                   </button>
 
-                  <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                  <button
+                    onClick={() => navigate(`/auth/service-list/${service._id}`)}
+                  >
                     View →
                   </button>
+
+
                 </div>
               </div>
             </div>

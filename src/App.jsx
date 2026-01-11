@@ -10,6 +10,7 @@ import AddDomainService from "./pages/AddDomainService";
 import AddServiceList from "./pages/AddServiceList";
 import { Employee } from "./pages/Employee";
 import { Service } from "./pages/Service";
+import ServiceList from "./pages/ServiceList";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -55,12 +56,17 @@ const App = () => {
           element={authUser ? <AddServiceList /> : <Navigate to="/login" />}
         />
         <Route
-        path="/employees"
-        element={authUser ? <Employee /> : <Navigate to="/login" />}
-      />
-      <Route
-      path="/services"
-      element={authUser ?<Service/>:<Navigate to="/login"/>}/>
+          path="/employees"
+          element={authUser ? <Employee /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/services"
+          element={authUser ? <Service /> : <Navigate to="/login" />} />
+
+        <Route
+          path="/auth/service-list/:domainServiceId"
+          element={<ServiceList />}
+        />
 
       </Routes>
       <Toaster />
