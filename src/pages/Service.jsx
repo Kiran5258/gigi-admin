@@ -13,6 +13,7 @@ export const Service = () => {
     try {
       const res = await axiosInstance.get("/auth/services");
       setDomainService(res.data.services || []);
+      console.log("Fetched services:", res.data.services);
     } catch (err) {
       console.error("Service fetch error:", err);
     } finally {
