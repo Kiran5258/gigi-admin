@@ -1,4 +1,68 @@
+/* ...existing code... */
 @import "tailwindcss";
+
+/* Design tokens */
+:root{
+  --brand-500: #4f46e5;
+  --brand-600: #4338ca;
+  --muted-500: #6b7280;
+  --card-bg: #ffffff;
+  --surface-1: #f8fafc;
+  --radius: 12px;
+  --glass: rgba(255,255,255,0.6);
+}
+
+/* Layout helpers */
+.app-shell { min-height:100vh; background:var(--surface-1); }
+
+/* Card */
+.card {
+  @apply bg-white rounded-[var(--radius)] shadow-sm p-4;
+}
+
+/* Inputs & buttons */
+.input-box {
+  @apply w-full flex items-center gap-3 text-sm text-black bg-slate-50 rounded px-4 py-2 mb-3 border border-slate-200 outline-none;
+}
+.btn-primary{
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-semibold shadow-md;
+  background: linear-gradient(90deg,var(--brand-500),var(--brand-600));
+}
+.btn-ghost {
+  @apply px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100;
+}
+
+/* Sidebar */
+.sidebar {
+  @apply w-64 h-screen bg-white shadow-lg fixed left-0 top-0 overflow-auto;
+}
+.sidebar .logo {
+  @apply text-xl font-bold text-[var(--brand-600)] px-5 py-6;
+}
+.sidebar nav a {
+  @apply flex items-center gap-3 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition;
+}
+.sidebar nav a.active {
+  @apply bg-[var(--brand-500)] text-white shadow;
+}
+
+/* Navbar */
+.admin-navbar {
+  @apply w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between;
+}
+
+/* Small loader */
+.loader-dot {
+  @apply w-9 h-9 border-4 border-gray-200 border-t-[var(--brand-600)] rounded-full animate-spin;
+}
+
+/* Utilities */
+.truncate-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 
 
 .input-box {

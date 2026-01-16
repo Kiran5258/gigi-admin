@@ -11,6 +11,8 @@ import AddServiceList from "./pages/AddServiceList";
 import { Employee } from "./pages/Employee";
 import { Service } from "./pages/Service";
 import ServiceList from "./pages/ServiceList";
+import Setting from "./pages/Setting";
+import ManageCategory from "./pages/ManageCategory.jsx";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -62,12 +64,13 @@ const App = () => {
         <Route
           path="/services"
           element={authUser ? <Service /> : <Navigate to="/login" />} />
-
+        <Route path="/manage-category" element={<ManageCategory />} />
+        <Route path="/service-list/:serviceId/category/:categoryId/edit" element={<ManageCategory />} />
         <Route
           path="/auth/service-list/:domainServiceId"
           element={<ServiceList />}
         />
-
+        <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />
       </Routes>
       <Toaster />
     </div>

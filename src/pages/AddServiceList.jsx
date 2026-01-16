@@ -27,8 +27,9 @@ export default function AddServiceList() {
 
   /* ================= FETCH DOMAINS ================= */
   useEffect(() => {
-    axiosInstance.get("/auth/services")
-      .then(res => setDomains(res.data.services || []))
+    axiosInstance
+      .get("/auth/services")
+      .then((res) => setDomains(res.data.services || []))
       .catch(() => toast.error("Failed to load domains"));
   }, []);
 
@@ -41,11 +42,9 @@ export default function AddServiceList() {
 
     axiosInstance
       .get(`/admin/service-categories/${form.DomainServiceId}`)
-      .then(res => setServices(res.data.services || []))
+      .then((res) => setServices(res.data.services || []))
       .catch(() => setServices([]));
   }, [form.DomainServiceId]);
-
-  console.log("SERVICES:", services);
 
   /* ================= FETCH CATEGORIES BY SERVICE ================= */
   useEffect(() => {
@@ -56,23 +55,23 @@ export default function AddServiceList() {
 
     axiosInstance
       .get(`/auth/show-subservices/${form.serviceId}`)
-      .then(res => setCategories(res.data.serviceCategory || []))
+      .then((res) => setCategories(res.data.serviceCategory || []))
       .catch(() => setCategories([]));
   }, [form.serviceId]);
 
   /* ================= HANDLERS ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setForm(prev => ({ ...prev, image: reader.result }));
+      setForm((prev) => ({ ...prev, image: reader.result }));
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
@@ -138,140 +137,190 @@ export default function AddServiceList() {
     }
   };
 
-
   /* ================= UI ================= */
   return (
     <AdminLayout>
-      <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow">
-        <h1 className="text-2xl font-bold mb-4">Add Service Category</h1>
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-800">Add Service Category</h1>
+            <p className="text-sm text-slate-500 mt-1">Create or attach a category to a service within a domain.</p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-
-          {/* DOMAIN */}
-          <select
-            name="DomainServiceId"
-            value={form.DomainServiceId}
-            onChange={handleChange}
-            className="w-full p-3 border rounded"
-          >
-            <option value="">Select Domain</option>
-            {domains.map(d => (
-              <option key={d._id} value={d._id}>
-                {d.domainName}
-              </option>
-            ))}
-          </select>
-
-          {/* SERVICE NAME (CLICK, NOT TYPE) */}
-          {/* SERVICE SELECT (only if services exist) */}
-          {services.length > 0 && (
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow">
+            {/* DOMAIN */}
+            <label className="text-sm text-slate-600 mb-2 block">Domain</label>
             <select
-              name="serviceId"
-              value={form.serviceId}
+              name="DomainServiceId"
+              value={form.DomainServiceId}
               onChange={(e) => {
-                const value = e.target.value;
-                setForm((prev) => ({
-                  ...prev,
-                  serviceId: value,
-                  serviceName: "", // clear manual name when selecting
-                }));
+                handleChange(e);
+                // clear dependent fields
+                setForm((prev) => ({ ...prev, serviceId: "", serviceName: "" }));
+                setCategories([]);
               }}
-              className="w-full p-3 border rounded"
+              className="input-box"
             >
-              <option value="">Select Service</option>
-              {services.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.serviceName}
+              <option value="">Select Domain</option>
+              {domains.map((d) => (
+                <option key={d._id} value={d._id}>
+                  {d.domainName}
                 </option>
               ))}
             </select>
-          )}
 
-          {/* NEW SERVICE INPUT */}
-          {(services.length === 0 || !form.serviceId) && (
-            <Inputfield
-              name="serviceName"
-              placeholder="New Service Name"
-              value={form.serviceName}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  serviceName: e.target.value,
-                }))
-              }
-            />
-          )}
+            {/* SERVICE SELECT / NEW */}
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {services.length > 0 ? (
+                <div>
+                  <label className="text-sm text-slate-600 mb-2 block">Choose Service</label>
+                  <select
+                    name="serviceId"
+                    value={form.serviceId}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setForm((prev) => ({ ...prev, serviceId: value, serviceName: "" }));
+                    }}
+                    className="input-box"
+                  >
+                    <option value="">Select Service</option>
+                    {services.map((s) => (
+                      <option key={s._id} value={s._id}>
+                        {s.serviceName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
 
-
-          {/* EXISTING CATEGORIES (READ ONLY) */}
-          {categories.length > 0 && (
-            <div className="border rounded p-2 text-sm">
-              <p className="font-medium mb-1">Existing Categories</p>
-              {categories.map(c => (
-                <p key={c._id}>• {c.serviceCategoryName}</p>
-              ))}
+              <div>
+                <label className="text-sm text-slate-600 mb-2 block">
+                  {services.length === 0 ? "Service Name" : "Or create new Service"}
+                </label>
+                <Inputfield
+                  name="serviceName"
+                  value={form.serviceName}
+                  onChange={(e) => setForm((prev) => ({ ...prev, serviceName: e.target.value }))}
+                  placeholder="New Service Name"
+                />
+              </div>
             </div>
-          )}
 
-          {/* NEW CATEGORY */}
-          <Inputfield
-            name="serviceCategoryName"
-            placeholder="New Category Name"
-            value={form.serviceCategoryName}
-            onChange={handleChange}
-          />
+            {/* EXISTING CATEGORIES */}
+            {categories.length > 0 && (
+              <div className="mt-4 bg-slate-50 p-3 rounded border">
+                <p className="font-medium text-sm mb-2">Existing Categories</p>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  {categories.map((c) => (
+                    <span key={c._id} className="px-2 py-1 bg-white border rounded text-slate-700 shadow-xs">
+                      {c.serviceCategoryName}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* DESCRIPTION */}
-          <RichEditor
-            value={form.description}
-            onChange={(html) =>
-              setForm(prev => ({ ...prev, description: html }))
-            }
-          />
+            {/* NEW CATEGORY */}
+            <div className="mt-4">
+              <label className="text-sm text-slate-600 mb-2 block">Category Name</label>
+              <Inputfield
+                name="serviceCategoryName"
+                value={form.serviceCategoryName}
+                onChange={handleChange}
+                placeholder="e.g. Premium Wash"
+              />
+            </div>
 
-          <Inputfield
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={form.price}
-            onChange={handleChange}
-          />
+            {/* DESCRIPTION */}
+            <div className="mt-4">
+              <label className="text-sm text-slate-600 mb-2 block">Description</label>
+              <RichEditor
+                value={form.description}
+                onChange={(html) => setForm((prev) => ({ ...prev, description: html }))}
+              />
+            </div>
 
-          <Inputfield
-            type="number"
-            name="duration"
-            placeholder="Duration (minutes)"
-            value={form.duration}
-            onChange={handleChange}
-          />
+            {/* NUMBERS */}
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Inputfield
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="Price"
+              />
+              <Inputfield
+                type="number"
+                name="duration"
+                value={form.duration}
+                onChange={handleChange}
+                placeholder="Duration (minutes)"
+              />
+              <Inputfield
+                type="number"
+                name="employeeCount"
+                value={form.employeeCount}
+                onChange={handleChange}
+                placeholder="Employee Count"
+              />
+            </div>
+          </div>
 
-          <Inputfield
-            type="number"
-            name="employeeCount"
-            placeholder="Employee Count"
-            value={form.employeeCount}
-            onChange={handleChange}
-          />
+          <aside className="bg-white p-6 rounded-xl shadow space-y-4">
+            <div>
+              <label className="text-sm text-slate-600 mb-2 block">Category Image</label>
+              <div className="border border-dashed rounded p-3">
+                <ImageUpload handleImageChange={handleImageChange} preview={preview} />
+                <p className="text-xs text-slate-400 mt-2">PNG/JPG up to 2MB. Recommended 4:3 ratio.</p>
+              </div>
+              {preview && (
+                <img src={preview} alt="preview" className="mt-3 w-full h-40 object-cover rounded-md border" />
+              )}
+            </div>
 
-          <ImageUpload
-            handleImageChange={handleImageChange}
-            preview={preview}
-          />
-          {preview && (
-            <img
-              src={preview}
-              alt="preview"
-              className="mt-4 w-32 h-32 object-cover rounded-lg shadow"
-            />
-          )}
+            <div>
+              <p className="text-sm text-slate-600 mb-2">Preview</p>
+              <div className="bg-slate-50 rounded p-3 text-sm text-slate-700">
+                <div className="font-medium">{form.serviceCategoryName || "Category title"}</div>
+                <div className="text-xs text-slate-500 mt-1 line-clamp-3" dangerouslySetInnerHTML={{ __html: form.description || "Short description" }} />
+                <div className="mt-3 text-xs text-slate-500">Price: <span className="font-medium text-slate-700">₹{form.price || "-"}</span></div>
+                <div className="text-xs text-slate-500">Duration: <span className="font-medium text-slate-700">{form.duration ? `${form.duration} min` : "-"}</span></div>
+              </div>
+            </div>
 
-          <button
-            disabled={loading}
-            className="w-full bg-blue-600 text-white p-3 rounded disabled:opacity-50"
-          >
-            {loading ? "Saving..." : "Add Category"}
-          </button>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setForm({
+                    DomainServiceId: "",
+                    serviceId: "",
+                    serviceName: "",
+                    serviceCategoryName: "",
+                    description: "",
+                    price: "",
+                    duration: "",
+                    employeeCount: "",
+                    image: null,
+                  });
+                  setPreview("");
+                }}
+                className="btn-ghost w-full"
+              >
+                Reset
+              </button>
 
+              <button
+                disabled={loading}
+                type="submit"
+                className="btn-primary w-full mt-2"
+              >
+                {loading ? "Saving..." : "Add Category"}
+              </button>
+            </div>
+          </aside>
         </form>
       </div>
     </AdminLayout>

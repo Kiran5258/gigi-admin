@@ -1,54 +1,86 @@
-import { useEffect, useState } from "react";
-import { axiosInstance } from "../config/axios";
-import Loader from "../components/Loader";
+// ...existing code...
 import AdminLayout from "../components/AdminLayout";
+import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 
 export default function Dashboard() {
-  const [counts, setCounts] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCounts();
+    let mounted = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/dashboard");
+        const data = res.ok ? await res.json() : null;
+        if (mounted) setStats(data);
+      } catch {
+        if (mounted) setStats(null);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => (mounted = false);
   }, []);
-
-  const fetchCounts = async () => {
-    try {
-      const res = await axiosInstance.get("/admin/employee-counts");
-      setCounts(res.data);
-    } catch (err) {
-      console.log("Count fetch error:", err);
-    }
-  };
 
   return (
     <AdminLayout>
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-3">Welcome Admin</h1>
-
-        {counts ? (
-          <div className="grid grid-cols-3 gap-6 mt-6">
-
-            <div className="bg-white p-6 rounded-xl shadow text-center">
-              <h2 className="text-xl font-semibold">Single Employees</h2>
-              <p className="text-4xl font-bold mt-2">{counts.singleEmployee}</p>
+      {loading ? (
+        <div className="py-12 flex items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="card">
+              <div className="text-sm text-slate-500">Revenue</div>
+              <div className="mt-2 text-xl font-semibold text-slate-800">₹{stats?.revenue ?? "0"}</div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow text-center">
-              <h2 className="text-xl font-semibold">Multiple Employees</h2>
-              <p className="text-4xl font-bold mt-2">{counts.mulipleEmplyee}</p>
+            <div className="card">
+              <div className="text-sm text-slate-500">Orders</div>
+              <div className="mt-2 text-xl font-semibold text-slate-800">{stats?.orders ?? 0}</div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow text-center">
-              <h2 className="text-xl font-semibold">Tool Shops</h2>
-              <p className="text-4xl font-bold mt-2">{counts.toolshop}</p>
+            <div className="card">
+              <div className="text-sm text-slate-500">Services</div>
+              <div className="mt-2 text-xl font-semibold text-slate-800">{stats?.services ?? 0}</div>
             </div>
 
+            <div className="card">
+              <div className="text-sm text-slate-500">Active Employees</div>
+              <div className="mt-2 text-xl font-semibold text-slate-800">{stats?.employees ?? 0}</div>
+            </div>
           </div>
-        ) : (
-          <div className="mt-4">
-            <Loader />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="card">
+              <h3 className="text-sm font-semibold text-slate-800 mb-3">Revenue Trend</h3>
+              <div className="h-48 bg-slate-50 rounded-md flex items-center justify-center text-slate-400">Chart placeholder</div>
+            </div>
+
+            <div className="card">
+              <h3 className="text-sm font-semibold text-slate-800 mb-3">Top Services</h3>
+              <ul className="space-y-3">
+                {(stats?.topServices || []).map((s) => (
+                  <li key={s.id} className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium text-slate-800">{s.title}</div>
+                      <div className="text-xs text-slate-500">{s.domain}</div>
+                    </div>
+                    <div className="text-sm text-slate-600">₹{s.price}</div>
+                  </li>
+                ))}
+                {(!stats?.topServices || stats.topServices.length === 0) && (
+                  <li className="text-slate-500 text-sm">No data</li>
+                )}
+              </ul>
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </AdminLayout>
   );
 }
+// ...existing code...

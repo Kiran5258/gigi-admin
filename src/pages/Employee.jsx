@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
 import { axiosInstance } from '../config/axios'
-import { Loader, User } from 'lucide-react';
+import Loader from '../components/Loader';
 import EmployeeSection from '../components/EmployeeSection';
 
 export const Employee = () => {
@@ -80,18 +80,26 @@ export const Employee = () => {
     return (
         <AdminLayout>
             <div className="p-6">
-                <h1 className="text-3xl font-bold mb-6">All Employees</h1>
+                <div className="flex items-center justify-between mb-6">
+                  <h1 className="text-3xl font-bold text-slate-800">All Employees</h1>
+                  <div className="flex gap-2">
+                    <button className="btn-primary">Invite</button>
+                    <button className="btn-ghost">Export</button>
+                  </div>
+                </div>
 
                 {loading ? (
-                    <Loader/>
+                    <div className="py-16 flex items-center justify-center">
+                      <Loader full />
+                    </div>
                 ) : normalizedEmployees.length === 0 ? (
-                    <p>No employee found</p>
+                    <div className="card text-center py-12 text-slate-600">No employee found</div>
                 ) : (
-                    <>
+                    <div className="space-y-8">
                         <EmployeeSection title="Single Employee" data={singleEmployees} />
                         <EmployeeSection title="Multiple Employee" data={multipleEmployees} />
                         <EmployeeSection title="Tool Shop" data={toolshopEmployees} />
-                    </>
+                    </div>
                 )}
             </div>
         </AdminLayout>

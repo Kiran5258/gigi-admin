@@ -4,16 +4,19 @@ import { toast } from "react-hot-toast";
 import AdminLayout from "../components/AdminLayout";
 import { Inputfield } from "../components/Inputfield";
 import ImageUpload from "../components/ImageUpload";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function AddDomainService() {
   const [domainName, setDomainName] = useState("");
   const [serviceImage, setServiceImage] = useState("");
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Convert image to Base64 (needed for Cloudinary)
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
@@ -36,7 +39,7 @@ export default function AddDomainService() {
     setLoading(true);
 
     try {
-      const res = await axiosInstance.post("/admin/add-domain-service", {
+      await axiosInstance.post("/admin/add-domain-service", {
         domainName,
         serviceImage,
       });
@@ -47,6 +50,8 @@ export default function AddDomainService() {
       setDomainName("");
       setServiceImage("");
       setPreview("");
+
+      navigate("/service"); // go back to service list (adjust route if needed)
     } catch (err) {
       const message =
         err?.response?.data?.message || "Failed to add domain service.";
@@ -58,57 +63,96 @@ export default function AddDomainService() {
 
   return (
     <AdminLayout>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-lg">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          Add Domain Service
-        </h1>
+      <div className="p-6 max-w-3xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+            className="btn-ghost p-2 rounded-md"
+          >
+            <ArrowLeft size={16} />
+          </button>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-800">Add Domain Service</h1>
+            <p className="text-sm text-slate-500 mt-1">Create a new domain and upload a representative image.</p>
+          </div>
+        </div>
 
+        <form onSubmit={handleSubmit} className="card space-y-6 p-6">
           {/* Domain Name */}
           <div>
-            <label className="text-gray-700 font-medium mb-1 block">
+            <label htmlFor="domainName" className="text-sm text-slate-700 font-medium mb-2 block">
               Domain Name
             </label>
             <Inputfield
+              id="domainName"
               type="text"
               value={domainName}
               onChange={(e) => setDomainName(e.target.value)}
-              placeholder="Enter domain name"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="e.g. Plumbing, Web Development"
             />
+            <p className="text-xs text-slate-400 mt-1">Choose a clear, short domain name that describes the service area.</p>
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="text-gray-700 font-medium mb-1 block">
-              Domain Image
-            </label>
+            <label className="text-sm text-slate-700 font-medium mb-2 block">Domain Image</label>
 
-            <ImageUpload handleImageChange={handleImageChange} preview={preview}    />
+            <div className="border border-dashed border-gray-200 rounded-lg p-4">
+              <ImageUpload handleImageChange={handleImageChange} preview={preview} />
+              <p className="text-xs text-slate-400 mt-2">PNG/JPG up to 2MB. Recommended ratio 16:9.</p>
+            </div>
 
             {preview && (
-              <img
-                src={preview}
-                alt="preview"
-                className="mt-4 w-32 h-32 object-cover rounded-lg shadow"
-              />
+              <div className="mt-4 flex items-center gap-3">
+                <img
+                  src={preview}
+                  alt="preview"
+                  className="w-28 h-20 object-cover rounded-md shadow-sm border"
+                />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-slate-800 truncate">{domainName || "Preview"}</div>
+                  <div className="text-xs text-slate-500 mt-1">Preview of selected image</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPreview("");
+                    setServiceImage("");
+                  }}
+                  className="btn-ghost text-sm"
+                >
+                  Remove
+                </button>
+              </div>
             )}
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full text-white py-3 rounded-lg text-lg font-semibold transition 
-            ${loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
-          >
-            {loading ? "Adding..." : "Add Service"}
-          </button>
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setDomainName("");
+                setServiceImage("");
+                setPreview("");
+              }}
+              className="btn-ghost"
+            >
+              Reset
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`btn-primary inline-flex items-center gap-2 ${loading ? "opacity-80 pointer-events-none" : ""}`}
+            >
+              {loading ? "Adding..." : "Add Service"}
+            </button>
+          </div>
         </form>
       </div>
-    </div>
     </AdminLayout>
   );
 }

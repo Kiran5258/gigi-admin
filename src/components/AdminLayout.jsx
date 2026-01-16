@@ -1,20 +1,17 @@
+// ...existing code...
 import AdminSidebar from "../components/AdminSiderbar";
 import AdminNavbar from "../components/AdminNavbar";
 
 export default function AdminLayout ({ children }) {
   return (
-    <div className="flex">
-      
+    <div className="app-shell">
       <AdminSidebar />
 
-      <div className="ml-60 w-full min-h-screen bg-gray-100">
-
+      <div className="ml-64 min-h-screen">
         <AdminNavbar />
-
-        <div className="p-6">
-          {children}
-        </div>
-
+        <main className="p-6">
+          <div className="card">{children}</div>
+        </main>
       </div>
     </div>
   );
