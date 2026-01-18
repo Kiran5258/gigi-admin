@@ -45,7 +45,7 @@ export default function ManageCategory() {
   useEffect(() => {
     if (!isEdit) return;
     setLoading(true);
-    axiosInstance.get(`/auth/show-subservices/${paramServiceId}`)
+    axiosInstance.get(`/auth/showsubservice/${paramServiceId}`)
       .then((res) => {
         const cats = res.data.serviceCategory || [];
         const cat = cats.find((c) => String(c._id) === String(categoryId));
