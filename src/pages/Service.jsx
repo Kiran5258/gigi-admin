@@ -91,28 +91,28 @@ export const Service = () => {
                   <div className="h-px bg-gray-100 my-4" />
 
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600">
+                    {/* <span className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600">
                       Active
-                    </span>
+                    </span> */}
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => navigate(`/auth/service-list/${service._id}`)}
-                        className="btn-ghost"
+                        className="btn-ghost cursor-pointer"
                       >
                         View
                       </button>
 
                       <button
                         onClick={() => navigate(`/edit-domain-service/${service._id}`)}
-                        className="btn-ghost"
+                        className="btn-ghost cursor-pointer"
                       >
                         Edit
                       </button>
 
                       <button
                         onClick={() => deleteService(service._id)}
-                        className="btn-ghost text-red-600 bg-red-50 hover:bg-red-100"
+                        className="btn-ghost cursor-pointer text-red-600 bg-red-50 hover:bg-red-100"
                       >
                         Delete
                       </button>

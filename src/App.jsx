@@ -13,6 +13,7 @@ import { Service } from "./pages/Service";
 import ServiceList from "./pages/ServiceList";
 import Setting from "./pages/Setting";
 import ManageCategory from "./pages/ManageCategory.jsx";
+import EditDomain from "./pages/EditDomain";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -53,6 +54,9 @@ const App = () => {
         <Route
           path="/add-domain-service"
           element={authUser ? <AddDomainService /> : <Navigate to="/login" />} />
+        <Route
+          path="/edit-domain-service/:domainserviceId"
+          element={authUser ? <EditDomain /> : <Navigate to="/login" />} />
         <Route
           path="/add-service-list"
           element={authUser ? <AddServiceList /> : <Navigate to="/login" />}
