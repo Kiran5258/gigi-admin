@@ -104,6 +104,13 @@ export const Service = () => {
                       </button>
 
                       <button
+                        onClick={() => navigate(`/edit-domain-service/${service._id}`)}
+                        className="btn-ghost"
+                      >
+                        Edit
+                      </button>
+
+                      <button
                         onClick={() => deleteService(service._id)}
                         className="btn-ghost text-red-600 bg-red-50 hover:bg-red-100"
                       >

@@ -10,10 +10,14 @@ const RichEditor = ({ value, onChange }) => {
       quill.on("text-change", () => {
         onChange(quill.root.innerHTML);
       });
-
-      quill.root.innerHTML = value;
     }
-  }, [quill]);
+  }, [quill, onChange]);
+
+  useEffect(() => {
+    if (quill && value !== quill.root.innerHTML) {
+      quill.root.innerHTML = value || "";
+    }
+  }, [quill, value]);
 
   return <div ref={quillRef} />;
 };
