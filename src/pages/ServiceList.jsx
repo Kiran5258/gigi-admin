@@ -17,22 +17,39 @@ const ServiceList = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    if (!domainServiceId) return;
-    setLoading(true);
+  if (!domainServiceId) return;
+  setLoading(true);
 
-    axiosInstance
-      .get(`/auth/service-list/${domainServiceId}`)
-      .then((res) => {
-        const service = res.data?.service;
-        setServices(service ? [service] : []);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch service list:", err);
-        toast.error("Failed to load services");
-        setServices([]);
-      })
-      .finally(() => setLoading(false));
-  }, [domainServiceId, refreshKey]);
+  axiosInstance
+    .get(`/auth/service-list/${domainServiceId}`)
+    .then((res) => {
+      const data = res.data;
+      console.log(data);
+      let list = [];
+
+      if (Array.isArray(data?.services)) {
+        list = data.services;
+      } else if (Array.isArray(data?.service)) {
+        list = data.service;
+      } else if (data?.service) {
+        list = [data.service];
+      } else {
+        console.error("Unknown API shape:", data);
+        toast.error("Server returned invalid data");
+        return;
+      }
+
+      setServices(list);
+    })
+    .catch((err) => {
+      console.error("Failed to fetch service list:", err);
+      toast.error("Failed to load services");
+      setServices([]);
+    })
+    .finally(() => setLoading(false));
+}, [domainServiceId, refreshKey]);
+
+
 
   const filteredServices = useMemo(() => {
     if (!q.trim()) return services;
