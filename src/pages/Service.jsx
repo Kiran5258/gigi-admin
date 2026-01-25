@@ -97,7 +97,7 @@ export const Service = () => {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => navigate(`/auth/service-list/${service._id}`)}
+                        onClick={() => navigate(`/auth/showsubservice/${service._id}`)}
                         className="btn-ghost cursor-pointer"
                       >
                         View

@@ -71,7 +71,7 @@ const App = () => {
         <Route path="/manage-category" element={<ManageCategory />} />
         <Route path="/service-list/:serviceId/category/:categoryId/edit" element={<ManageCategory />} />
         <Route
-          path="/auth/service-list/:domainServiceId"
+          path="/auth/showsubservice/:domainServiceId"
           element={<ServiceList />}
         />
         <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />

@@ -21,7 +21,7 @@ const ServiceList = () => {
   setLoading(true);
 
   axiosInstance
-    .get(`/auth/service-list/${domainServiceId}`)
+    .get(`/auth/showsubservice/${domainServiceId}`)
     .then((res) => {
       const data = res.data;
       console.log(data);
