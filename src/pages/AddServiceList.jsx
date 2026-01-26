@@ -40,10 +40,11 @@ export default function AddServiceList() {
       return;
     }
 
-    axiosInstance
+    const data=axiosInstance
       .get(`/admin/service-categories/${form.DomainServiceId}`)
       .then((res) => setServices(res.data.services || []))
       .catch(() => setServices([]));
+      console.log(data);
   }, [form.DomainServiceId]);
 
   /* ================= FETCH CATEGORIES BY SERVICE ================= */

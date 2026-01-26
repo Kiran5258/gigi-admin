@@ -14,6 +14,10 @@ import ServiceList from "./pages/ServiceList";
 import Setting from "./pages/Setting";
 import ManageCategory from "./pages/ManageCategory.jsx";
 import EditDomain from "./pages/EditDomain";
+import DomainpartsList from "./pages/DomainpartsList";
+import DomainpartDetail from "./pages/DomainpartDetail";
+import AddDomainPart from "./pages/AddDomainPart";
+import EditDomainPart from "./pages/EditDomainPart";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -74,6 +78,10 @@ const App = () => {
           path="/auth/showsubservice/:domainServiceId"
           element={<ServiceList />}
         />
+        <Route path="/domainparts" element={authUser ? <DomainpartsList /> : <Navigate to="/login" />} />
+        <Route path="/domainpart/:DomainpartId" element={authUser ? <DomainpartDetail /> : <Navigate to="/login" />} />
+        <Route path="/edit-domain-part/:DomainpartId" element={authUser ? <EditDomainPart /> : <Navigate to="/login" />} />
+        <Route path="/add-domain-part" element={authUser ? <AddDomainPart /> : <Navigate to="/login" />} />
         <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />
       </Routes>
       <Toaster />

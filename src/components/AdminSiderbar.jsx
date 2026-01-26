@@ -8,7 +8,9 @@ export default function AdminSiderbar() {
     { name: "Dashboard", path: "/dashboard", icon: <Home size={18} /> },
     { name: "Employee", path: "/employees", icon: <User size={18} /> },
     { name: "Services", path: "/services", icon: <ClipboardList size={18} /> },
+    { name: "Domain Parts", path: "/domainparts", icon: <ClipboardList size={18} /> },
     { name: "Add Domain", path: "/add-domain-service", icon: <Plus size={18} /> },
+    {name:"Add Domainparts",path:"/add-domain-part",icon:<Plus size={18}/>},
     { name: "Add Service", path: "/add-service-list", icon: <ClipboardList size={18} /> },
     { name: "Settings", path: "/settings", icon: <Settings size={18} /> },
   ];
