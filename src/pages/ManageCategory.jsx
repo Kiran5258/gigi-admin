@@ -32,7 +32,7 @@ export default function ManageCategory() {
   useEffect(() => {
     axiosInstance.get("/auth/services")
       .then((r) => setDomains(r.data.services || []))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -41,38 +41,38 @@ export default function ManageCategory() {
       .then((r) => setServices(r.data.services || []))
       .catch(() => setServices([]));
   }, [form.DomainServiceId]);
-
   useEffect(() => {
     if (!isEdit) return;
+
     setLoading(true);
-    axiosInstance.get(`/auth/showsubservice/${paramServiceId}`)
+
+    axiosInstance
+      .get(`auth/service-list/${categoryId}`)
       .then((res) => {
-        const cats = res.data.serviceCategory || [];
-        const cat = cats.find((c) => String(c._id) === String(categoryId));
-        if (!cat) {
-          toast.error("Category not found");
-          navigate(-1);
-          return;
-        }
+        const data = res.data;
+
         setForm((p) => ({
           ...p,
           serviceId: paramServiceId,
-          serviceName: res.data.serviceName || "",
-          serviceCategoryName: cat.serviceCategoryName || "",
-          description: cat.description || "",
-          price: cat.price || "",
-          duration: cat.durationInMinutes || "",
-          employeeCount: cat.employeeCount || "",
-          image: cat.servicecategoryImage || null,
+          serviceName: data.serviceName || "",
+          DomainServiceId: data.domainServiceId || "",
+          serviceCategoryName: data.serviceCategory.serviceCategoryName || "",
+          description: data.serviceCategory.description || "",
+          price: data.serviceCategory.price || "",
+          duration: data.serviceCategory.durationInMinutes || "",
+          employeeCount: data.serviceCategory.employeeCount || "",
+          image: data.serviceCategory.servicecategoryImage || null,
         }));
-        setPreview(cat.servicecategoryImage || "");
+
+        setPreview(data.serviceCategory.servicecategoryImage || "");
       })
       .catch(() => {
         toast.error("Failed to load category");
         navigate(-1);
       })
       .finally(() => setLoading(false));
-  }, [isEdit, paramServiceId, categoryId, navigate]);
+  }, [isEdit, categoryId, navigate]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
