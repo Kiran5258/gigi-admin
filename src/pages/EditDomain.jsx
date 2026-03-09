@@ -93,96 +93,71 @@ export default function EditDomain() {
   if (fetching) {
     return (
       <AdminLayout>
-        <Loader/>
+        <Loader />
       </AdminLayout>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="p-6 max-w-3xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
+      <div className="max-w-4xl mx-auto space-y-10 pb-20">
+        {/* Header Section */}
+        <div className="flex items-center gap-6 bg-white dark:bg-slate-900 p-8 rounded-[40px] shadow-sm border border-slate-100 dark:border-slate-800 animate-in fade-in duration-500">
           <button
             onClick={() => navigate(-1)}
-            aria-label="Go back"
-            className="btn-ghost p-2 rounded-md"
+            className="p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-2xl text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all border border-slate-100 dark:border-slate-700 shadow-sm"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
           </button>
-
           <div>
-            <h1 className="text-2xl font-semibold text-slate-800">Edit Domain Service</h1>
-            <p className="text-sm text-slate-500 mt-1">Update domain name or replace the image.</p>
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Edit Domain Node</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium italic mt-1 uppercase tracking-widest text-[10px]">Update spectral identity and registry parameters</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="card space-y-6 p-6">
-          <div>
-            <label htmlFor="domainName" className="text-sm text-slate-700 font-medium mb-2 block">
-              Domain Name
-            </label>
-            <Inputfield
-              id="domainName"
-              type="text"
-              value={domainName}
-              onChange={(e) => setDomainName(e.target.value)}
-              placeholder="e.g. Plumbing, Web Development"
-            />
-            <p className="text-xs text-slate-400 mt-1">Short, descriptive domain name.</p>
-          </div>
-
-          <div>
-            <label className="text-sm text-slate-700 font-medium mb-2 block">Domain Image</label>
-
-            <div className="border border-dashed border-gray-200 rounded-lg p-4">
-              <ImageUpload handleImageChange={handleImageChange} preview={preview} />
-              <p className="text-xs text-slate-400 mt-2">PNG/JPG up to 2MB. Recommended ratio 16:9.</p>
-            </div>
-
-            {preview && (
-              <div className="mt-4 flex items-center gap-3">
-                <img
-                  src={preview}
-                  alt="preview"
-                  className="w-28 h-20 object-cover rounded-md shadow-sm border"
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+          <div className="lg:col-span-3 space-y-10">
+            <div className="card-premium bg-white dark:bg-slate-900 space-y-10">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Domain Identity</label>
+                <input
+                  type="text"
+                  value={domainName}
+                  onChange={(e) => setDomainName(e.target.value)}
+                  placeholder="e.g. PLUMBING, WEB DEVELOPMENT..."
+                  className="input-premium uppercase dark:bg-slate-950/40"
                 />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-800 truncate">{domainName || "Preview"}</div>
-                  <div className="text-xs text-slate-500 mt-1">Preview of selected image</div>
+              </div>
+
+              <div className="space-y-6 pt-10 border-t border-slate-50 dark:border-slate-800">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 block">Visual Branding Signature</label>
+                <div className="h-80 w-full">
+                  <ImageUpload handleImageChange={handleImageChange} preview={preview} />
                 </div>
+                <p className="text-[10px] font-bold text-slate-300 dark:text-slate-600 mt-2 italic uppercase tracking-widest">Spectral asset for registry representation.</p>
+              </div>
+            </div>
+          </div>
+          <div className="lg:col-span-2 space-y-10">
+            <div className="card-premium bg-white dark:bg-slate-900 space-y-8 h-fit">
+              <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Registry Actions</h3>
+              <div className="flex flex-col gap-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-premium w-full !py-6"
+                >
+                  {loading ? "Synchronizing..." : "Commit changes"}
+                </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setPreview("");
-                    setServiceImage("");
-                  }}
-                  className="btn-ghost text-sm"
+                  onClick={() => navigate(-1)}
+                  className="btn-secondary-premium w-full !py-4"
                 >
-                  Remove
+                  Cancel operation
                 </button>
               </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                // Reset to original preview
-                setPreview(serviceImage);
-              }}
-              className="btn-ghost"
-            >
-              Reset
-            </button>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`btn-primary inline-flex items-center gap-2 ${loading ? "opacity-80 pointer-events-none" : ""}`}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
+            </div>
           </div>
         </form>
       </div>

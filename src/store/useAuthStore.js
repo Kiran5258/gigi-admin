@@ -54,4 +54,41 @@ export const useAuthStore = create((set) => ({
         set({ authUser: null });
         toast.success("Logged out successfully!");
     },
+
+    // -------------------- INVITE ADMIN --------------------
+    inviteAdmin: async (data) => {
+        try {
+            const res = await axiosInstance.post("/admin/invite", data);
+            toast.success("Invite sent successfully!");
+            return res.data;
+        } catch (err) {
+            const message = err?.response?.data?.message || "Failed to send invite";
+            toast.error(message);
+            throw err;
+        }
+    },
+
+    // -------------------- GET PERMISSIONS --------------------
+    getPermissions: async () => {
+        try {
+            const res = await axiosInstance.get("/admin/permissions");
+            return res.data.permissions;
+        } catch (err) {
+            console.log("Error in getPermissions:", err);
+            return {};
+        }
+    },
+
+    // -------------------- SIGNUP WITH INVITE --------------------
+    signupWithInvite: async (data) => {
+        try {
+            const res = await axiosInstance.post("/admin/signup-invite", data);
+            toast.success("Account created successfully!");
+            return res.data;
+        } catch (err) {
+            const message = err?.response?.data?.message || "Signup failed";
+            toast.error(message);
+            throw err;
+        }
+    }
 }));

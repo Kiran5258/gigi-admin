@@ -19,6 +19,7 @@
     "react-hot-toast": "^2.6.0",
     "react-quilljs": "^2.0.5",
     "react-router-dom": "^7.9.6",
+    "recharts": "^3.8.0",
     "suneditor": "^2.47.8",
     "suneditor-react": "^3.6.1",
     "tailwindcss": "^4.1.17",

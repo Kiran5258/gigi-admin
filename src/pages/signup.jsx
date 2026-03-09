@@ -1,17 +1,16 @@
-import { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
-import { Inputfield } from "../components/Inputfield";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { useAuthStore } from '../store/useAuthStore';
+import { Inputfield } from '../components/Inputfield';
 
-
-export default function AdminLogin() {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoggingIn } = useAuthStore();
+  const [fullname, setFullname] = useState("");
+  const { signup, isSigningUp } = useAuthStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login({ email, password });
+    signup({ fullname, email, password });
   };
 
   return (
@@ -19,22 +18,30 @@ export default function AdminLogin() {
       <div className="w-full max-w-md card-premium animate-float">
         <div className="mb-10 text-center">
           <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase mb-4">
-            Admin Login
+            Master Registry
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium italic uppercase tracking-widest text-[10px]">Security credential protocol initiated</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium italic uppercase tracking-widest text-[10px]">Initialize administrative node</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Inputfield
-            label="Email Address"
+            label="Formal Identity"
+            type="text"
+            value={fullname}
+            placeholder="ENTER FULL NAME..."
+            onChange={(e) => setFullname(e.target.value)}
+          />
+
+          <Inputfield
+            label="Email Identity"
             type="email"
             value={email}
-            placeholder="admin@gigiman.com"
+            placeholder="ADMIN@ORGANIZATION.COM"
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <Inputfield
-            label="Security Password"
+            label="Security Protocol"
             type="password"
             value={password}
             placeholder="••••••••••••"
@@ -43,22 +50,21 @@ export default function AdminLogin() {
 
           <button
             type="submit"
-            disabled={isLoggingIn}
+            disabled={isSigningUp}
             className="w-full btn-premium mt-4"
           >
-            {isLoggingIn ? "Authenticating..." : "Sign In to Admin"}
+            {isSigningUp ? "Initializing..." : "Register Master Admin"}
           </button>
         </form>
 
         <div className="mt-8 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-6">
-          <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">
+          <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest text-center">
             © {new Date().getFullYear()} GigiMan Administrative Suite
-          </p>
-          <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">
-            Need access? <Link to="/signup-invite" className="text-indigo-600 dark:text-indigo-400 font-black hover:underline tracking-widest">Request Invite</Link>
           </p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default signup

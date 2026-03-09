@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Loader from "./components/Loader";
 import { useAuthStore } from "./store/useAuthStore";
+import { useThemeStore } from "./store/useThemeStore";
 import { Toaster } from "react-hot-toast";
 import AddDomainService from "./pages/AddDomainService";
 import AddServiceList from "./pages/AddServiceList";
@@ -18,39 +19,48 @@ import DomainpartsList from "./pages/DomainpartsList";
 import DomainpartDetail from "./pages/DomainpartDetail";
 import AddDomainPart from "./pages/AddDomainPart";
 import EditDomainPart from "./pages/EditDomainPart";
+import InviteAdmin from "./pages/InviteAdmin";
+import InviteSignup from "./pages/InviteSignup";
+import ManageBanner from "./pages/ManageBanner";
+import ManageUsers from "./pages/ManageUsers";
+import UserHistory from "./pages/UserHistory";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
-  // Run checkAuth ONCE
+  // Run checkAuth and sync theme
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   if (isCheckingAuth) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-white dark:bg-slate-950">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-transparent transition-colors duration-300">
       <Routes>
-        {/* If logged in → go to dashboard */}
         <Route
           path="/"
           element={authUser ? <Dashboard /> : <Navigate to="/login" />}
         />
-
-        {/* Dashboard Protected Route */}
         <Route
           path="/dashboard"
           element={authUser ? <Dashboard /> : <Navigate to="/login" />}
         />
-
-        {/* Login */}
         <Route
           path="/login"
           element={!authUser ? <Login /> : <Navigate to="/dashboard" />}
@@ -82,6 +92,11 @@ const App = () => {
         <Route path="/domainpart/:DomainpartId" element={authUser ? <DomainpartDetail /> : <Navigate to="/login" />} />
         <Route path="/edit-domain-part/:DomainpartId" element={authUser ? <EditDomainPart /> : <Navigate to="/login" />} />
         <Route path="/add-domain-part" element={authUser ? <AddDomainPart /> : <Navigate to="/login" />} />
+        <Route path="/invite-admin" element={authUser ? <InviteAdmin /> : <Navigate to="/login" />} />
+        <Route path="/signup-invite" element={<InviteSignup />} />
+        <Route path="/manage-banner" element={authUser ? <ManageBanner /> : <Navigate to="/login" />} />
+        <Route path="/users" element={authUser ? <ManageUsers /> : <Navigate to="/login" />} />
+        <Route path="/user-history/:userId" element={authUser ? <UserHistory /> : <Navigate to="/login" />} />
         <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />
       </Routes>
       <Toaster />

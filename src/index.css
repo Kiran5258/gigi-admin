@@ -1,73 +1,194 @@
-/* ...existing code... */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
-/* Design tokens */
-:root{
-  --brand-500: #4f46e5;
-  --brand-600: #4338ca;
-  --muted-500: #6b7280;
-  --card-bg: #ffffff;
-  --surface-1: #f8fafc;
-  --radius: 12px;
-  --glass: rgba(255,255,255,0.6);
+/* ===============================
+   DESIGN TOKENS
+================================= */
+
+:root {
+  --indigo-50: #f5f7ff;
+  --indigo-100: #ebf0ff;
+  --indigo-200: #d6e0ff;
+  --indigo-300: #adc2ff;
+  --indigo-400: #85a3ff;
+  --indigo-500: #5c85ff;
+  --indigo-600: #3366ff;
+  --indigo-700: #2952cc;
+  --indigo-800: #1f3d99;
+  --indigo-900: #142966;
+
+  --surface-50: #ffffff;
+  --surface-100: #f8fafc;
+  --surface-200: #f1f5f9;
+
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-xl: 48px;
+
+  font-family: "Outfit", sans-serif;
 }
 
-/* Layout helpers */
-.app-shell { min-height:100vh; background:var(--surface-1); }
+.dark {
+  --indigo-50: #0f172a;
+  --indigo-100: #1e293b;
+  --indigo-200: #334155;
+  --indigo-300: #475569;
+  --indigo-400: #64748b;
+  --indigo-500: #818cf8;
+  --indigo-600: #a5b4fc;
+  --indigo-700: #c7d2fe;
+  --indigo-800: #e0e7ff;
+  --indigo-900: #f5f7ff;
 
-/* Card */
-.card {
-  @apply bg-white rounded-[var(--radius)] shadow-sm p-4;
-}
+  --surface-50: #020617;
+  --surface-100: #0f172a;
+  --surface-200: #1e293b;
 
-/* Inputs & buttons */
-.input-box {
-  @apply w-full flex items-center gap-3 text-sm text-black bg-slate-50 rounded px-4 py-2 mb-3 border border-slate-200 outline-none;
-}
-.btn-primary{
-  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-semibold shadow-md;
-  background: linear-gradient(90deg,var(--brand-500),var(--brand-600));
-}
-.btn-ghost {
-  @apply px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100;
-}
-
-/* Sidebar */
-.sidebar {
-  @apply w-64 h-screen bg-white shadow-lg fixed left-0 top-0 overflow-auto;
-}
-.sidebar .logo {
-  @apply text-xl font-bold text-[var(--brand-600)] px-5 py-6;
-}
-.sidebar nav a {
-  @apply flex items-center gap-3 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition;
-}
-.sidebar nav a.active {
-  @apply bg-[var(--brand-500)] text-white shadow;
+  --glass: rgba(15, 23, 42, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.05);
 }
 
-/* Navbar */
-.admin-navbar {
-  @apply w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between;
+/* ===============================
+   GLOBAL BACKGROUND
+================================= */
+
+body {
+  background-color: #ffffff;
+  background-attachment: fixed;
+  color: #0f172a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Small loader */
-.loader-dot {
-  @apply w-9 h-9 border-4 border-gray-200 border-t-[var(--brand-600)] rounded-full animate-spin;
+.dark body {
+  background-color: #020617;
 }
 
-/* Utilities */
-.truncate-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.dark body {
+  background-image:
+    radial-gradient(at 0% 0%, hsla(225, 30%, 5%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 30%, 8%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(225, 30%, 5%, 1) 0, transparent 50%);
+  background-color: #020617;
+  color: #f1f5f9;
 }
 
+/* ===============================
+   SCROLLBAR
+================================= */
 
-.input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-black bg-slate-100 rounded px-4 py-3 mb-4 mt-3 border border-slate-200 outline-none
- }
-.btn-primary{
-    @apply w-full text-sm font-medium text-white p-[10px] cursor-pointer  bg-violet-500 shadow-lg shadow-purple-600/5 rounded-md my-1 hover:bg-purple-600/15 hover:text-purple-600 transition duration-100
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 999px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5f5;
+}
+
+/* ===============================
+   COMPONENTS
+================================= */
+
+@layer components {
+
+  /* CARD */
+
+  .card-premium {
+    @apply bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-10 transition-all duration-500 shadow-sm shadow-slate-200/50 dark:shadow-none;
+    border-radius: var(--radius-lg);
+  }
+
+  .dark .card-premium {
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  /* INPUT */
+
+  .input-box {
+    @apply flex items-center gap-4 w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 px-6 py-4 transition-all duration-300 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500/50;
+    border-radius: var(--radius-md);
+  }
+
+  .input-premium {
+    @apply w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 px-6 py-4 font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all text-xs tracking-widest;
+    border-radius: var(--radius-md);
+  }
+
+  /* PRIMARY BUTTON */
+
+  .btn-premium {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 text-white font-bold tracking-widest text-xs shadow-xl shadow-indigo-100/50 hover:shadow-indigo-200/60 hover:-translate-y-1 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    text-transform: uppercase;
+  }
+
+  /* SECONDARY BUTTON */
+
+  .btn-secondary-premium {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-widest text-xs hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-200 dark:hover:border-slate-600 active:scale-95 transition-all;
+    border-radius: var(--radius-md);
+  }
+
+  /* SIDEBAR */
+
+  .sidebar-premium {
+    @apply w-72 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 fixed left-0 top-0 h-screen overflow-hidden flex flex-col;
+    z-index: 50;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-4 px-6 py-4 mx-4 my-1 rounded-2xl text-slate-400 dark:text-slate-500 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-300;
+  }
+
+  .sidebar-link-active {
+    @apply flex items-center gap-4 px-6 py-4 mx-4 my-1 rounded-2xl font-bold text-white bg-indigo-600 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/40 hover:bg-indigo-700 transition-all;
+  }
+
+  .admin-navbar {
+    @apply sticky top-0 z-40 flex items-center justify-between px-10 py-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800;
+  }
+
+  /* UPLOAD ZONE */
+
+  .upload-zone-premium {
+    @apply relative w-full border-4 border-dashed border-slate-100 p-12 transition-all duration-500 flex flex-col items-center justify-center gap-6 hover:border-indigo-200 hover:bg-indigo-50/30 overflow-hidden;
+    border-radius: 32px;
+  }
+
+}
+
+/* ===============================
+   ANIMATIONS
+================================= */
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
