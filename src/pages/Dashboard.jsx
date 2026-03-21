@@ -43,6 +43,7 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#3b82f6'
 export default function Dashboard() {
   const navigate = useNavigate();
   const { stats, liveBookings, loading, fetchStats, fetchLiveBookings, exportData } = useDashboardStore();
+  const [timeframe, setTimeframe] = useState("monthly"); // daily, weekly, monthly, yearly
 
   useEffect(() => {
     fetchStats();
@@ -114,6 +115,15 @@ export default function Dashboard() {
     value: s.count
   })) || [];
 
+  const currentTrendData = stats?.trends?.[timeframe] || stats?.monthlyTrends || [];
+
+  const timeframes = [
+    { id: 'daily', label: 'Daily' },
+    { id: 'weekly', label: 'Weekly' },
+    { id: 'monthly', label: 'Monthly' },
+    { id: 'yearly', label: 'Yearly' },
+  ];
+
   return (
     <AdminLayout>
       <div className="max-w-[1600px] mx-auto space-y-10 pb-20">
@@ -123,7 +133,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Admin Console</h1>
             <p className="text-slate-500 font-medium italic mt-1 flex items-center gap-2">
-              <Activity size={14} className="text-emerald-500" /> System throughput and economic velocity overview
+              <Activity size={14} className="text-emerald-500" /> System throughput and economic
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -131,6 +141,13 @@ export default function Dashboard() {
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
               <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Global Status: Operational</span>
             </div>
+            <button
+              onClick={() => navigate('/analytics')}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center gap-2 group"
+            >
+              <TrendingUp size={16} className="group-hover:translate-y-[-2px] group-hover:translate-x-1 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Deep Metrics</span>
+            </button>
             <button
               onClick={exportData}
               className="btn-secondary-premium group"
@@ -175,15 +192,31 @@ export default function Dashboard() {
                 <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] mb-1">Service Velocity</h2>
                 <p className="text-xs font-medium text-slate-400 dark:text-slate-500 italic">Core service revenue throughput</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
-                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Active Services</span>
+              <div className="flex items-center gap-4">
+                {/* Timeframe Toggle */}
+                <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                  {timeframes.map((tf) => (
+                    <button
+                      key={tf.id}
+                      onClick={() => setTimeframe(tf.id)}
+                      className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${timeframe === tf.id
+                        ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                        }`}
+                    >
+                      {tf.label}
+                    </button>
+                  ))}
+                </div>
+                {/* <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                </div> */}
               </div>
             </div>
 
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats?.monthlyTrends || []}>
+                <AreaChart data={currentTrendData}>
                   <defs>
                     <linearGradient id="gIndigo" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
@@ -237,7 +270,7 @@ export default function Dashboard() {
 
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats?.monthlyTrends || []}>
+                <AreaChart data={currentTrendData}>
                   <defs>
                     <linearGradient id="gEmerald" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />

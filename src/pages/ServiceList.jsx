@@ -225,7 +225,8 @@ const ServiceList = () => {
                               </div>
                               <div className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 p-3 rounded-2xl flex flex-col items-center justify-center border border-amber-100 dark:border-amber-800/40 shadow-sm">
                                 <Users size={12} className="mb-1" />
-                                <span className="text-xs font-black tracking-tighter">{cat.employeeCount || 0} NODES</span>
+                                <span className="text-xs font-black tracking-tighter"> EMPLOYEE</span>
+                                <span className="text-xs font-black tracking-tighter">{cat.employeeCount || 0}</span>
                               </div>
                             </div>
                           </div>

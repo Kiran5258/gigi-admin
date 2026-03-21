@@ -25,13 +25,13 @@ export default function AdminNavbar() {
       <div className="flex items-center gap-6">
         <button
           onClick={toggleTheme}
-          className="p-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-95 shadow-sm border border-slate-100 dark:border-slate-700"
+          className="p-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-600 dark:text-wi-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-95 shadow-sm border border-slate-100 dark:border-slate-700"
           title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
           {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
         </button>
 
-        <div className="flex flex-col items-end hidden sm:flex">
+        <div className="flex flex-col items-end  sm:flex">
           <div className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">
             {authUser?.name || "System Admin"}
           </div>

@@ -1,4 +1,4 @@
-import { ClipboardList, Home, Plus, Settings, User, Image, Users, Layers, Layout, ShieldCheck, Box } from "lucide-react";
+import { ClipboardList, Home, Plus, Settings, User, Image, Users, Layers, Layout, ShieldCheck, Box, TrendingUp, Tag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export default function AdminSiderbar() {
@@ -9,6 +9,7 @@ export default function AdminSiderbar() {
       label: "General",
       items: [
         { name: "Dashboard", path: "/dashboard", icon: <Layout size={20} /> },
+        { name: "Finance Hub", path: "/analytics", icon: <TrendingUp size={20} /> },
         { name: "Employees", path: "/employees", icon: <Users size={20} /> },
         { name: "Customers", path: "/users", icon: <User size={20} /> },
       ]
@@ -21,12 +22,14 @@ export default function AdminSiderbar() {
         { name: "Service Domains", path: "/add-domain-service", icon: <Layers size={20} /> },
         { name: "Part Domains", path: "/add-domain-part", icon: <Plus size={20} /> },
         { name: "Service Catalog", path: "/add-service-list", icon: <Layout size={20} /> },
+        { name: "Banners", path: "/manage-banner", icon: <Image size={20} /> },
+        { name: "Coupons", path: "/coupons", icon: <Tag size={20} /> },
       ]
     },
     {
       label: "System",
       items: [
-        { name: "Banners", path: "/manage-banner", icon: <Image size={20} /> },
+
         { name: "Team Invitations", path: "/invite-admin", icon: <ShieldCheck size={20} /> },
         { name: "System Settings", path: "/settings", icon: <Settings size={20} /> },
       ]

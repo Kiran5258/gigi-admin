@@ -24,6 +24,8 @@ import InviteSignup from "./pages/InviteSignup";
 import ManageBanner from "./pages/ManageBanner";
 import ManageUsers from "./pages/ManageUsers";
 import UserHistory from "./pages/UserHistory";
+import Analytics from "./pages/Analytics";
+import ManageCoupons from "./pages/ManageCoupons";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -62,6 +64,10 @@ const App = () => {
           element={authUser ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route
+          path="/analytics"
+          element={authUser ? <Analytics /> : <Navigate to="/login" />}
+        />
+        <Route
           path="/login"
           element={!authUser ? <Login /> : <Navigate to="/dashboard" />}
         />
@@ -95,6 +101,7 @@ const App = () => {
         <Route path="/invite-admin" element={authUser ? <InviteAdmin /> : <Navigate to="/login" />} />
         <Route path="/signup-invite" element={<InviteSignup />} />
         <Route path="/manage-banner" element={authUser ? <ManageBanner /> : <Navigate to="/login" />} />
+        <Route path="/coupons" element={authUser ? <ManageCoupons /> : <Navigate to="/login" />} />
         <Route path="/users" element={authUser ? <ManageUsers /> : <Navigate to="/login" />} />
         <Route path="/user-history/:userId" element={authUser ? <UserHistory /> : <Navigate to="/login" />} />
         <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />
