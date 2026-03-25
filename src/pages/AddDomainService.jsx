@@ -6,10 +6,11 @@ import { Inputfield } from "../components/Inputfield";
 import ImageUpload from "../components/ImageUpload";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Layers, Upload, Trash2, CheckCircle2 } from "lucide-react";
+import Loader from "../components/Loader";
 
 export default function AddDomainService() {
   const [domainName, setDomainName] = useState("");
-  const [serviceImage, setServiceImage] = useState("");
+  const [serviceImageFile, setServiceImageFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,11 +19,11 @@ export default function AddDomainService() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setServiceImageFile(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
-      setServiceImage(reader.result);
       setPreview(reader.result);
     };
   };
@@ -30,23 +31,34 @@ export default function AddDomainService() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!domainName || !serviceImage) {
-      toast.error("Please provide both a name and an image!");
+    if (!domainName.trim()) {
+      toast.error("Sector name is required!");
+      return;
+    }
+
+    if (!serviceImageFile) {
+      toast.error("Visual branding image is required!");
       return;
     }
 
     setLoading(true);
 
     try {
-      await axiosInstance.post("/admin/add-domain-service", {
-        domainName,
-        serviceImage,
+      const formData = new FormData();
+      formData.append("domainName", domainName.trim());
+      formData.append("serviceImage", serviceImageFile);
+
+      await axiosInstance.post("/admin/add-domain-service", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       toast.success("Domain service initialized successfully!");
       navigate("/services");
     } catch (err) {
-      const message = err?.response?.data?.message || "Failed to add domain service.";
+      const message =
+        err?.response?.data?.message || "Failed to add domain service.";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -113,7 +125,7 @@ export default function AddDomainService() {
                   type="button"
                   onClick={() => {
                     setDomainName("");
-                    setServiceImage("");
+                    setServiceImageFile(null);
                     setPreview("");
                   }}
                   className="btn-secondary-premium group"
@@ -129,7 +141,7 @@ export default function AddDomainService() {
                 >
                   {loading ? (
                     <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Processing...</span>
                     </div>
                   ) : "Initialize Domain"}
@@ -180,7 +192,7 @@ export default function AddDomainService() {
               {preview && (
                 <button
                   type="button"
-                  onClick={() => { setPreview(""); setServiceImage(""); }}
+                  onClick={() => { setPreview(""); setServiceImageFile(null); }}
                   className="w-full flex items-center justify-center gap-2 py-3 text-rose-500 font-black uppercase text-[10px] tracking-widest border border-rose-100 rounded-xl hover:bg-rose-50 transition-all"
                 >
                   <Trash2 size={14} /> Discard Image

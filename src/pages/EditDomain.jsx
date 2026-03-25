@@ -5,14 +5,15 @@ import { Inputfield } from "../components/Inputfield";
 import ImageUpload from "../components/ImageUpload";
 import { axiosInstance } from "../config/axios";
 import { toast } from "react-hot-toast";
-import { ArrowLeft, Loader } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import Loader from "../components/Loader";
 
 export default function EditDomain() {
   const { domainserviceId } = useParams();
   const navigate = useNavigate();
 
   const [domainName, setDomainName] = useState("");
-  const [serviceImage, setServiceImage] = useState("");
+  const [serviceImageFile, setServiceImageFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -30,7 +31,6 @@ export default function EditDomain() {
         }
 
         setDomainName(svc.domainName || "");
-        setServiceImage(svc.serviceImage || "");
         setPreview(svc.serviceImage || "");
       } catch (err) {
         console.error("Fetch service error:", err);
@@ -47,11 +47,11 @@ export default function EditDomain() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setServiceImageFile(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
-      setServiceImage(reader.result);
       setPreview(reader.result);
     };
   };
@@ -59,22 +59,29 @@ export default function EditDomain() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!domainName) {
-      toast.error("Please provide a domain name");
+    if (!domainName.trim()) {
+      toast.error("Domain name is required");
       return;
     }
 
     setLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("domainName", domainName.trim());
+      if (serviceImageFile) {
+        formData.append("serviceImage", serviceImageFile);
+      }
+
       const adminToken = localStorage.getItem("token");
 
       await axiosInstance.put(
         `/admin/domainservice-edit/${domainserviceId}`,
-        { domainName, serviceImage },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${adminToken}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -93,7 +100,7 @@ export default function EditDomain() {
   if (fetching) {
     return (
       <AdminLayout>
-        <Loader />
+        <Loader full={true} />
       </AdminLayout>
     );
   }
@@ -145,9 +152,16 @@ export default function EditDomain() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-premium w-full !py-6"
+                  className="btn-premium w-full !py-6 flex items-center justify-center gap-3"
                 >
-                  {loading ? "Synchronizing..." : "Commit changes"}
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Synchronizing...</span>
+                    </>
+                  ) : (
+                    "Commit changes"
+                  )}
                 </button>
                 <button
                   type="button"
