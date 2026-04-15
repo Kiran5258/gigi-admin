@@ -26,6 +26,9 @@ import ManageUsers from "./pages/ManageUsers";
 import UserHistory from "./pages/UserHistory";
 import Analytics from "./pages/Analytics";
 import ManageCoupons from "./pages/ManageCoupons";
+import ManageTickets from "./pages/ManageTickets";
+import FailedBookings from "./pages/FailedBookings";
+import Commissions from "./pages/Commissions";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -104,6 +107,9 @@ const App = () => {
         <Route path="/coupons" element={authUser ? <ManageCoupons /> : <Navigate to="/login" />} />
         <Route path="/users" element={authUser ? <ManageUsers /> : <Navigate to="/login" />} />
         <Route path="/user-history/:userId" element={authUser ? <UserHistory /> : <Navigate to="/login" />} />
+        <Route path="/complaints" element={authUser ? <ManageTickets /> : <Navigate to="/login" />} />
+        <Route path="/failed-bookings" element={authUser ? <FailedBookings /> : <Navigate to="/login" />} />
+        <Route path="/commissions" element={authUser ? <Commissions /> : <Navigate to="/login" />} />
         <Route path="/settings" element={authUser ? <Setting /> : <Navigate to="/" />} />
       </Routes>
       <Toaster />

@@ -1,4 +1,4 @@
-import { ClipboardList, Home, Plus, Settings, User, Image, Users, Layers, Layout, ShieldCheck, Box, TrendingUp, Tag } from "lucide-react";
+import { ClipboardList, Home, Plus, Settings, User, Image, Users, Layers, Layout, ShieldCheck, Box, TrendingUp, Tag, MessageSquare, AlertCircle, DollarSign } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export default function AdminSiderbar() {
@@ -12,6 +12,9 @@ export default function AdminSiderbar() {
         { name: "Finance Hub", path: "/analytics", icon: <TrendingUp size={20} /> },
         { name: "Employees", path: "/employees", icon: <Users size={20} /> },
         { name: "Customers", path: "/users", icon: <User size={20} /> },
+        { name: "Complaints", path: "/complaints", icon: <MessageSquare size={20} /> },
+        { name: "Failed Bookings", path: "/failed-bookings", icon: <AlertCircle size={20} /> },
+        { name: "Commission Wallet", path: "/commissions", icon: <DollarSign size={20} /> },
       ]
     },
     {
