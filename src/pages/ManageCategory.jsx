@@ -17,6 +17,7 @@ export default function ManageCategory() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   const [form, setForm] = useState({
     DomainServiceId: "",
@@ -84,9 +85,11 @@ export default function ManageCategory() {
     const file = e?.target?.files?.[0];
     if (!file) {
       setForm((p) => ({ ...p, image: null }));
+      setImageFile(null);
       setPreview("");
       return;
     }
+    setImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setForm((p) => ({ ...p, image: reader.result }));
@@ -97,6 +100,7 @@ export default function ManageCategory() {
 
   const handleRemoveImage = () => {
     setForm((p) => ({ ...p, image: null }));
+    setImageFile(null);
     setPreview("");
   };
 
@@ -109,15 +113,24 @@ export default function ManageCategory() {
     setLoading(true);
     try {
       if (isEdit) {
+        const formData = new FormData();
+        formData.append("serviceCategoryName", form.serviceCategoryName);
+        formData.append("description", form.description);
+        formData.append("price", Number(form.price));
+        formData.append("durationInMinutes", Number(form.duration));
+        formData.append("employeeCount", Number(form.employeeCount));
+        
+        if (imageFile) {
+          formData.append("servicecategoryImage", imageFile);
+        }
+
         await axiosInstance.put(
           `/admin/update-service-category/${paramServiceId}/${categoryId}`,
+          formData,
           {
-            serviceCategoryName: form.serviceCategoryName,
-            description: form.description,
-            price: Number(form.price),
-            durationInMinutes: Number(form.duration),
-            employeeCount: Number(form.employeeCount),
-            servicecategoryImage: form.image,
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
           }
         );
         toast.success("Category updated");
