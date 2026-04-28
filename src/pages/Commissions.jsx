@@ -6,8 +6,9 @@ import { Loader2, DollarSign, Search, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Commissions = () => {
-    const { commissions, fetchCommissions, addCommission, loading } = useCommissionStore();
+    const { commissions, summary, fetchCommissions, addCommission, loading } = useCommissionStore();
     const { employees, fetchEmployees } = useEmployeeStore();
+    const [activeTab, setActiveTab] = useState('summary'); // 'summary' or 'transactions'
     const [statusFilter, setStatusFilter] = useState('');
     const [searchName, setSearchName] = useState('');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -38,6 +39,18 @@ const Commissions = () => {
         }
     };
 
+    const filteredSummary = summary.filter(s => {
+        if (!searchName.trim()) return true;
+        const name = (s.name || '').toLowerCase();
+        return name.includes(searchName.toLowerCase());
+    });
+
+    const filteredTransactions = commissions.filter(c => {
+        if (!searchName.trim()) return true;
+        const name = (c.empId?.fullname || c.empId?.storeName || '').toLowerCase();
+        return name.includes(searchName.toLowerCase());
+    });
+
     return (
         <AdminLayout>
             <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -60,20 +73,46 @@ const Commissions = () => {
                     </button>
                 </div>
 
+                {/* Tabs */}
+                <div className="flex border-b border-slate-200 dark:border-slate-800">
+                    <button
+                        onClick={() => setActiveTab('summary')}
+                        className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                            activeTab === 'summary' 
+                            ? 'border-indigo-600 text-indigo-600' 
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Wallet Summary
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('transactions')}
+                        className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                            activeTab === 'transactions' 
+                            ? 'border-indigo-600 text-indigo-600' 
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Live Transactions
+                    </button>
+                </div>
+
                 {/* Filters */}
                 <div className="bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-wrap gap-4 items-center shadow-sm">
-                    <div className="flex-1 min-w-[200px]">
-                        <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Status</label>
-                        <select 
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                        >
-                            <option value="">All Statuses</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="PAID">Paid</option>
-                        </select>
-                    </div>
+                    {activeTab === 'transactions' && (
+                        <div className="flex-1 min-w-[200px]">
+                            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Status</label>
+                            <select 
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                            >
+                                <option value="">All Statuses</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="PAID">Paid</option>
+                            </select>
+                        </div>
+                    )}
                     
                     <div className="flex-1 min-w-[200px]">
                         <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Servicer Name</label>
@@ -90,79 +129,120 @@ const Commissions = () => {
                     </div>
                 </div>
 
-                {/* Table */}
+                {/* Content */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-medium">
-                                <tr>
-                                    <th className="px-6 py-4">Transaction ID</th>
-                                    <th className="px-6 py-4">Servicer</th>
-                                    <th className="px-6 py-4">Amount</th>
-                                    <th className="px-6 py-4">Type/Service</th>
-                                    <th className="px-6 py-4">Status</th>
-                                    <th className="px-6 py-4 text-right">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                {loading && commissions.length === 0 ? (
+                        {activeTab === 'summary' ? (
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-medium">
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center">
-                                            <Loader2 className="w-6 h-6 animate-spin text-slate-400 mx-auto" />
-                                        </td>
+                                        <th className="px-6 py-4">Servicer</th>
+                                        <th className="px-6 py-4 text-amber-600">Total Pending</th>
+                                        <th className="px-6 py-4 text-green-600">Total Paid</th>
+                                        <th className="px-6 py-4 text-slate-800 dark:text-white">Gross Amount</th>
+                                        <th className="px-6 py-4 text-right">Action</th>
                                     </tr>
-                                ) : commissions.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
-                                            No commission records found.
-                                        </td>
-                                    </tr>
-                                ) : (() => {
-                                    const filtered = commissions.filter(c => {
-                                        if (!searchName.trim()) return true;
-                                        const name = (c.empId?.fullname || c.empId?.storeName || '').toLowerCase();
-                                        return name.includes(searchName.toLowerCase());
-                                    });
-
-                                    if (filtered.length === 0) {
-                                        return (
-                                            <tr>
-                                                <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
-                                                    No matching commission records found.
-                                                </td>
-                                            </tr>
-                                        );
-                                    }
-
-                                    return filtered.map((c) => (
-                                        <tr key={c._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors text-slate-700 dark:text-slate-300">
-                                            <td className="px-6 py-4 font-mono text-xs">{c._id.substring(0, 8)}...</td>
-                                            <td className="px-6 py-4">
-                                                <div className="font-medium">{c.empId?.fullname || c.empId?.storeName || 'Unknown'}</div>
-                                                <div className="text-xs text-slate-500">{c.empType}</div>
-                                            </td>
-                                            <td className="px-6 py-4 font-bold text-slate-800 dark:text-white">
-                                                ₹{c.commissionAmount}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {c.serviceId?.serviceName || <span className="text-slate-400 italic">Manual Entry</span>}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${
-                                                    c.status === 'PAID' ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30'
-                                                }`}>
-                                                    {c.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right text-slate-500 text-xs">
-                                                {new Date(c.createdAt).toLocaleDateString()}
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {loading && summary.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-12 text-center">
+                                                <Loader2 className="w-6 h-6 animate-spin text-slate-400 mx-auto" />
                                             </td>
                                         </tr>
-                                    ));
-                                })()
-                                }
-                            </tbody>
-                        </table>
+                                    ) : filteredSummary.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
+                                                No summary records found.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredSummary.map((s) => (
+                                            <tr key={s._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors text-slate-700 dark:text-slate-300">
+                                                <td className="px-6 py-4">
+                                                    <div className="font-medium">{s.name || 'Unknown'}</div>
+                                                    <div className="text-xs text-slate-500 uppercase">{s.type?.replace('_', ' ') || 'Servicer'}</div>
+                                                </td>
+                                                <td className="px-6 py-4 font-bold text-amber-600">
+                                                    ₹{s.totalPending}
+                                                </td>
+                                                <td className="px-6 py-4 font-semibold text-green-600">
+                                                    ₹{s.totalPaid}
+                                                </td>
+                                                <td className="px-6 py-4 font-medium">
+                                                    ₹{s.totalCommission}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button 
+                                                        onClick={() => {
+                                                            setSearchName(s.name);
+                                                            setActiveTab('transactions');
+                                                        }}
+                                                        className="text-xs text-indigo-600 hover:underline font-medium"
+                                                    >
+                                                        View History
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-medium">
+                                    <tr>
+                                        <th className="px-6 py-4">Transaction ID</th>
+                                        <th className="px-6 py-4">Servicer</th>
+                                        <th className="px-6 py-4">Amount</th>
+                                        <th className="px-6 py-4">Type/Service</th>
+                                        <th className="px-6 py-4">Status</th>
+                                        <th className="px-6 py-4 text-right">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {loading && commissions.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="6" className="px-6 py-12 text-center">
+                                                <Loader2 className="w-6 h-6 animate-spin text-slate-400 mx-auto" />
+                                            </td>
+                                        </tr>
+                                    ) : filteredTransactions.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
+                                                No matching commission records found.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredTransactions.map((c) => (
+                                            <tr key={c._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors text-slate-700 dark:text-slate-300">
+                                                <td className="px-6 py-4 font-mono text-xs">{c._id.substring(0, 8)}...</td>
+                                                <td className="px-6 py-4">
+                                                    <div className="font-medium">{c.empId?.fullname || c.empId?.storeName || 'Unknown'}</div>
+                                                    <div className="text-xs text-slate-500">{c.empType}</div>
+                                                </td>
+                                                <td className="px-6 py-4 font-bold text-slate-800 dark:text-white">
+                                                    ₹{c.commissionAmount}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {c.serviceId?.serviceName || <span className="text-slate-400 italic">Manual Entry</span>}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${
+                                                        c.status === 'PAID' ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30'
+                                                    }`}>
+                                                        {c.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right text-slate-500 text-xs">
+                                                    {new Date(c.createdAt).toLocaleDateString()}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             </div>

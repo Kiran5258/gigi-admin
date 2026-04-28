@@ -108,6 +108,15 @@ export default function Dashboard() {
       color: "violet",
       path: "/users"
     },
+    {
+      title: "Total Commission",
+      value: `₹${stats?.revenueOverview?.totalCommission?.toLocaleString() || stats?.totalCommission?.toLocaleString() || stats?.totalcommission?.toLocaleString() || 0}`,
+      icon: <DollarSign />,
+      trend: "+15.0%",
+      positive: true,
+      color: "cyan",
+      path: "/commissions"
+    },
   ];
 
   const distributionData = stats?.statusDistribution?.map(s => ({
@@ -159,7 +168,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {statCards.map((card, i) => (
             <div
               key={i}

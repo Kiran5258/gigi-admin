@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 export const useCommissionStore = create((set) => ({
     commissions: [],
+    summary: [],
     loading: false,
 
     fetchCommissions: async (status, empId) => {
@@ -15,7 +16,10 @@ export const useCommissionStore = create((set) => ({
             
             const res = await axiosInstance.get("/admin/commissions", { params });
             if (res.data.success) {
-                set({ commissions: res.data.commissions });
+                set({ 
+                    commissions: res.data.commissions,
+                    summary: res.data.summary || []
+                });
             }
         } catch (error) {
             console.error("Error fetching commissions:", error);
